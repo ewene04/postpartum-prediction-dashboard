@@ -63,10 +63,10 @@ if mode == "Real-Time (LightGBM)":
     # Input sliders for user data
     depression_frequency = st.selectbox("How frequently do you feel depressed since birth?", list(depression_frequencies.keys()))
     household_income = st.selectbox("What is the total income you have in the past 12 months?", list(incomes.keys()))
-    maternal_race = st.selectbox("What is your age?", list(maternal_races.keys()))
-    maternal_age = st.selectbox("What is your wife's age?", list(maternal_ages.keys()))
-    paternal_education = st.selectbox("What is your husband's educational level?", list(educational_levels.keys()))
-    maternal_education = st.selectbox("What is your wife's educational level?", list(educational_levels.keys()))
+    maternal_race = st.selectbox("What is the race of the mother?", list(maternal_races.keys()))
+    maternal_age = st.selectbox("What is the age of the mother?", list(maternal_ages.keys()))
+    paternal_education = st.selectbox("What is the educational level of the father?", list(educational_levels.keys()))
+    maternal_education = st.selectbox("What is the educational levle of the mother?", list(educational_levels.keys()))
     state = st.selectbox("What is the current state you are staying in?", list(states.keys()))
     depression_after = st.selectbox("Do you feel depressed after giving birth?", list(depression_after_birth.keys()))
     
