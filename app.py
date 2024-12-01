@@ -1,16 +1,16 @@
-import streamlit as st
-import pandas as pd
+import lightgbm as lgb
 import tensorflow as tf
 import pickle
 
-# Load models
 @st.cache_resource
 def load_models():
-    lgb_model = pickle.load(open("lightgbm_model.pkl", "rb"))
+    # Load the LightGBM model from .txt
+    lgb_model = lgb.Booster(model_file="lightgbm_model.txt")
+    
+    # Load the ANN model
     ann_model = tf.keras.models.load_model("ann_model.h5")
+    
     return lgb_model, ann_model
-
-lgb_model, ann_model = load_models()
 
 # Sidebar for mode selection
 mode = st.sidebar.radio("Choose Mode:", ["Real-Time (LightGBM)", "Batch (ANN)"])
