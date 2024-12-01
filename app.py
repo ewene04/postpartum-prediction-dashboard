@@ -19,7 +19,7 @@ st.markdown(
     .main-title {
         text-align: center;
         font-size: 45px;
-        color: #c5eddd; /* First color from the scheme */
+        color: #d9046a; /* First color from the scheme */
         font-weight: bold;
         margin-bottom: 20px;
     }
