@@ -2,6 +2,7 @@ import streamlit as st
 import lightgbm as lgb
 import tensorflow as tf
 import pickle
+import pandas as pd
 
 @st.cache_resource
 def load_models():
