@@ -11,7 +11,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Apply custom styling with the color scheme
+# Apply custom styling with the new color scheme
 st.markdown(
     """
     <style>
@@ -19,19 +19,19 @@ st.markdown(
     .main-title {
         text-align: center;
         font-size: 40px;
-        color: #32BFB8; /* First color from the scheme */
+        color: #c5eddd; /* First color from the scheme */
         font-weight: bold;
         margin-bottom: 20px;
     }
 
     /* Streamlit sidebar styling */
     .css-1d391kg {
-        background-color: #A0D8DA !important; /* Second color from the scheme */
+        background-color: #d8ecca !important; /* Second color from the scheme */
     }
 
     /* Button Styling */
     .stButton button {
-        background-color: #FFE6B4 !important; /* Third color */
+        background-color: #fbd6bd !important; /* Third color */
         color: black !important;
         border: none;
         padding: 10px 20px;
@@ -40,18 +40,18 @@ st.markdown(
     }
 
     .stButton button:hover {
-        background-color: #FFB5A3 !important; /* Fourth color */
+        background-color: #feaeab !important; /* Fourth color */
         color: white !important;
     }
 
     /* Success and Error Messages */
     .st-success {
-        background-color: #32BFB8 !important; /* First color */
-        color: white;
+        background-color: #c5eddd !important; /* First color */
+        color: black;
     }
 
     .st-error {
-        background-color: #FFB5A3 !important; /* Fifth color */
+        background-color: #feb9be !important; /* Fifth color */
         color: white;
     }
     </style>
