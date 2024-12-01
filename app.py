@@ -124,23 +124,33 @@ elif mode == "Batch (ANN)":
                 # Reorder columns to match the required order
                 batch_data_numeric = batch_data_numeric[required_columns]
 
-                # Predict using ANN
-                predictions = ann_model.predict(batch_data_numeric).flatten()  # Flatten the predictions array
-                batch_data["Prediction"] = [
-                    "High Risk of Postpartum Depression" if pred > 0.5 else "Low Risk of Postpartum Depression" 
-                    for pred in predictions
-                ]
-                
-                # Display results
-                st.write("Prediction Results:")
-                st.dataframe(batch_data)
+                # Ensure no rows were dropped during preprocessing
+                if len(batch_data_numeric) != len(batch_data):
+                    st.error("Error: Some rows were lost during preprocessing. Please check your input file.")
+                else:
+                    # Predict using ANN
+                    predictions = ann_model.predict(batch_data_numeric).flatten()
 
-                # Allow download of results
-                st.download_button(
-                    label="Download Predictions",
-                    data=batch_data.to_csv(index=False),
-                    file_name="batch_predictions.csv",
-                    mime="text/csv"
-                )
+                    # Ensure predictions length matches the input
+                    if len(predictions) != len(batch_data_numeric):
+                        st.error("Error: The number of predictions does not match the input data. Please verify your model.")
+                    else:
+                        # Add predictions to the original dataframe
+                        batch_data["Prediction"] = [
+                            "High Risk of Postpartum Depression" if pred > 0.5 else "Low Risk of Postpartum Depression" 
+                            for pred in predictions
+                        ]
+                        
+                        # Display results
+                        st.write("Prediction Results:")
+                        st.dataframe(batch_data)
+
+                        # Allow download of results
+                        st.download_button(
+                            label="Download Predictions",
+                            data=batch_data.to_csv(index=False),
+                            file_name="batch_predictions.csv",
+                            mime="text/csv"
+                        )
         except Exception as e:
             st.error(f"Error processing uploaded file: {e}")
