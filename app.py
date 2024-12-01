@@ -124,26 +124,12 @@ elif mode == "Batch (ANN)":
                 # Reorder columns to match the required order
                 batch_data_numeric = batch_data_numeric[required_columns]
 
-                # Debug: Ensure row counts match
-                st.write("Original batch data rows:", len(batch_data))
-                st.write("Numeric batch data rows:", len(batch_data_numeric))
-
                 # Predict using ANN and extract probability for the positive class
                 raw_predictions = ann_model.predict(batch_data_numeric)
-                st.write("Raw predictions shape:", raw_predictions.shape)
-                st.write("Sample raw predictions:", raw_predictions[:5])
-
-                # Check if the model outputs probabilities for multiple classes
                 if len(raw_predictions.shape) > 1 and raw_predictions.shape[1] > 1:
-                    # Extract probabilities for class 1
                     predictions = raw_predictions[:, 1]
                 else:
-                    # Single-output model (binary classification)
                     predictions = raw_predictions.flatten()
-
-                # Debug: Check predictions shape and values
-                st.write("Predictions shape:", predictions.shape)
-                st.write("Sample predictions:", predictions[:5])
 
                 # Ensure predictions length matches the input
                 if len(predictions) != len(batch_data_numeric):
