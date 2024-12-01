@@ -124,12 +124,15 @@ elif mode == "Batch (ANN)":
                 # Reorder columns to match the required order
                 batch_data_numeric = batch_data_numeric[required_columns]
 
-                # Debug: Check data shape and model input shape
-                st.write("Input data shape:", batch_data_numeric.shape)
-                st.write("Expected model input shape:", ann_model.input_shape)
+                # Debug: Ensure row counts match
+                st.write("Original batch data rows:", len(batch_data))
+                st.write("Numeric batch data rows:", len(batch_data_numeric))
 
                 # Predict using ANN
                 predictions = ann_model.predict(batch_data_numeric).flatten()
+                
+                # Debug: Check predictions shape
+                st.write("Predictions shape:", predictions.shape)
 
                 # Ensure predictions length matches the input
                 if len(predictions) != len(batch_data_numeric):
