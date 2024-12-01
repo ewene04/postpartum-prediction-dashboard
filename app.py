@@ -14,6 +14,38 @@ def load_models():
 # Load the models
 lgb_model, ann_model = load_models()
 
+# Set the page config for the dashboard
+st.set_page_config(
+    page_title="Postpartum Depression Prediction",
+    page_icon="🤱",
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
+
+# Apply custom styling
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #F5F5F5;
+    }
+    .main-title {
+        text-align: center;
+        color: #32BFB8;
+        font-size: 40px;
+        font-weight: bold;
+    }
+    .sidebar .sidebar-content {
+        background-color: #B6D9D4;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Dashboard Title
+st.markdown("<div class='main-title'>Postpartum Depression Prediction</div>", unsafe_allow_html=True)
+
 # Dropdown options and mappings
 states = {
     "Not sure": 0, "Utah": 1, "New York City": 2, "Illinois": 3, "Colorado": 4, 
@@ -54,11 +86,11 @@ maternal_ages = {
 }
 
 # Sidebar for mode selection
-mode = st.sidebar.radio("Choose Mode:", ["Real-Time (LightGBM)", "Batch (ANN)"])
+mode = st.sidebar.radio("Choose Mode:", ["Real-Time Prediction", "Batch Prediction"])
 
 # Real-Time Prediction using LightGBM
 if mode == "Real-Time (LightGBM)":
-    st.title("Real-Time Prediction (LightGBM)")
+    st.title("Real-Time Prediction using LightGBM")
     
     # Input sliders for user data
     depression_frequency = st.selectbox("How frequently do you feel depressed since birth?", list(depression_frequencies.keys()))
@@ -94,7 +126,7 @@ if mode == "Real-Time (LightGBM)":
 
 # Batch Prediction using ANN
 elif mode == "Batch (ANN)":
-    st.title("Batch Prediction (ANN)")
+    st.title("Batch Prediction using ANN")
     
     uploaded_file = st.file_uploader("Upload a CSV File (8 columns required)", type="csv")
     
