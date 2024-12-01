@@ -11,16 +11,48 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Apply custom styling for the dashboard title
+# Apply custom styling with the color scheme
 st.markdown(
     """
     <style>
+    /* Main Dashboard Title */
     .main-title {
         text-align: center;
         font-size: 40px;
-        color: #32BFB8;
+        color: #32BFB8; /* First color from the scheme */
         font-weight: bold;
         margin-bottom: 20px;
+    }
+
+    /* Streamlit sidebar styling */
+    .css-1d391kg {
+        background-color: #A0D8DA !important; /* Second color from the scheme */
+    }
+
+    /* Button Styling */
+    .stButton button {
+        background-color: #FFE6B4 !important; /* Third color */
+        color: black !important;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .stButton button:hover {
+        background-color: #FFB5A3 !important; /* Fourth color */
+        color: white !important;
+    }
+
+    /* Success and Error Messages */
+    .st-success {
+        background-color: #32BFB8 !important; /* First color */
+        color: white;
+    }
+
+    .st-error {
+        background-color: #FFB5A3 !important; /* Fifth color */
+        color: white;
     }
     </style>
     """,
