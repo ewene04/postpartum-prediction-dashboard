@@ -3,6 +3,33 @@ import lightgbm as lgb
 import tensorflow as tf
 import pandas as pd
 
+# Add Page Configuration and Styling
+st.set_page_config(
+    page_title="Postpartum Depression Prediction",
+    page_icon="🤱",
+    layout="centered",
+    initial_sidebar_state="expanded"
+)
+
+# Apply custom styling for the dashboard title
+st.markdown(
+    """
+    <style>
+    .main-title {
+        text-align: center;
+        font-size: 40px;
+        color: #32BFB8;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Dashboard Title
+st.markdown("<div class='main-title'>Postpartum Depression Prediction</div>", unsafe_allow_html=True)
+
 @st.cache_resource
 def load_models():
     # Load LightGBM model
