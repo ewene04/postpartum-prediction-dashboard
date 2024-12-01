@@ -18,7 +18,7 @@ st.markdown(
     /* Main Dashboard Title */
     .main-title {
         text-align: center;
-        font-size: 40px;
+        font-size: 50px;
         color: #c5eddd; /* First color from the scheme */
         font-weight: bold;
         margin-bottom: 20px;
