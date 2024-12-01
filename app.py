@@ -14,38 +14,6 @@ def load_models():
 # Load the models
 lgb_model, ann_model = load_models()
 
-# Set the page config for the dashboard
-st.set_page_config(
-    page_title="Postpartum Depression Prediction",
-    page_icon="🤱",
-    layout="centered",
-    initial_sidebar_state="expanded"
-)
-
-# Apply custom styling
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-color: #F5F5F5;
-    }
-    .main-title {
-        text-align: center;
-        color: #32BFB8;
-        font-size: 40px;
-        font-weight: bold;
-    }
-    .sidebar .sidebar-content {
-        background-color: #B6D9D4;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Dashboard Title
-st.markdown("<div class='main-title'>Postpartum Depression Prediction</div>", unsafe_allow_html=True)
-
 # Dropdown options and mappings
 states = {
     "Not sure": 0, "Utah": 1, "New York City": 2, "Illinois": 3, "Colorado": 4, 
