@@ -54,11 +54,11 @@ maternal_ages = {
 }
 
 # Sidebar for mode selection
-mode = st.sidebar.radio("Choose Mode:", ["Real-Time Prediction", "Batch Prediction"])
+mode = st.sidebar.radio("Choose Mode:", ["Real-Time (LightGBM)", "Batch (ANN)"])
 
 # Real-Time Prediction using LightGBM
 if mode == "Real-Time (LightGBM)":
-    st.title("Real-Time Prediction using LightGBM")
+    st.title("Real-Time Prediction (LightGBM)")
     
     # Input sliders for user data
     depression_frequency = st.selectbox("How frequently do you feel depressed since birth?", list(depression_frequencies.keys()))
@@ -94,7 +94,7 @@ if mode == "Real-Time (LightGBM)":
 
 # Batch Prediction using ANN
 elif mode == "Batch (ANN)":
-    st.title("Batch Prediction using ANN")
+    st.title("Batch Prediction (ANN)")
     
     uploaded_file = st.file_uploader("Upload a CSV File (8 columns required)", type="csv")
     
