@@ -49,6 +49,10 @@ depression_after_birth = {
     "Not sure": 0, "NO": 1, "YES": 2
 }
 
+maternal_ages = {
+    "Unknown": 0, "17 or younger": 17, "45 or older": 45
+}
+
 # Sidebar for mode selection
 mode = st.sidebar.radio("Choose Mode:", ["Real-Time (LightGBM)", "Batch (ANN)"])
 
@@ -57,23 +61,24 @@ if mode == "Real-Time (LightGBM)":
     st.title("Real-Time Prediction (LightGBM)")
     
     # Input sliders for user data
-    state = st.selectbox("What is the current state you are staying in?", list(states.keys()))
-    maternal_race = st.selectbox("What is your age?", list(maternal_races.keys()))
-    maternal_education = st.selectbox("What is your wife's educational level?", list(educational_levels.keys()))
-    paternal_education = st.selectbox("What is your husband's educational level?", list(educational_levels.keys()))
-    household_income = st.selectbox("What is the total income you have in the past 12 months?", list(incomes.keys()))
     depression_frequency = st.selectbox("How frequently do you feel depressed since birth?", list(depression_frequencies.keys()))
+    household_income = st.selectbox("What is the total income you have in the past 12 months?", list(incomes.keys()))
+    maternal_race = st.selectbox("What is your age?", list(maternal_races.keys()))
+    maternal_age = st.selectbox("What is your wife's age?", list(maternal_ages.keys()))
+    paternal_education = st.selectbox("What is your husband's educational level?", list(educational_levels.keys()))
+    maternal_education = st.selectbox("What is your wife's educational level?", list(educational_levels.keys()))
+    state = st.selectbox("What is the current state you are staying in?", list(states.keys()))
     depression_after = st.selectbox("Do you feel depressed after giving birth?", list(depression_after_birth.keys()))
     
     if st.button("Predict"):
-        # Map inputs to numerical values
         input_data = pd.DataFrame({
-            "STATE": [states[state]],
-            "MAT_RACE_PU": [maternal_races[maternal_race]],
-            "MAT_ED": [educational_levels[maternal_education]],
-            "PAT_ED": [educational_levels[paternal_education]],
-            "INCOME8": [incomes[household_income]],
             "MH_PPDPR": [depression_frequencies[depression_frequency]],
+            "INCOME8": [incomes[household_income]],
+            "MAT_RACE_PU": [maternal_races[maternal_race]],
+            "MAT_AGE_PU": [maternal_ages[maternal_age]],
+            "PAT_ED": [educational_levels[paternal_education]],
+            "MAT_ED": [educational_levels[maternal_education]],
+            "STATE": [states[state]],
             "MH_PPDX": [depression_after_birth[depression_after]]
         })
 
@@ -99,11 +104,12 @@ elif mode == "Batch (ANN)":
             batch_data = pd.read_csv(uploaded_file)
 
             # Validate column structure
-            required_columns = ["STATE", "MAT_RACE_PU", "MAT_ED", "PAT_ED", "INCOME8", "MH_PPDPR", "MH_PPDX"]
-            if not set(required_columns).issubset(batch_data.columns):
-                st.error("Uploaded file must contain the following columns: " + ", ".join(required_columns))
+            required_columns = ["MH_PPDPR", "INCOME8", "MAT_RACE_PU", "MAT_AGE_PU", "PAT_ED", "MAT_ED", "STATE", "MH_PPDX"]
+            missing_columns = [col for col in required_columns if col not in batch_data.columns]
+            if missing_columns:
+                st.error(f"Missing required columns: {', '.join(missing_columns)}")
             else:
-                # Predict using ANN
+                # Map input data to numerical values
                 batch_data_numeric = batch_data.replace({
                     "STATE": states, 
                     "MAT_RACE_PU": maternal_races,
@@ -111,9 +117,14 @@ elif mode == "Batch (ANN)":
                     "PAT_ED": educational_levels,
                     "INCOME8": incomes,
                     "MH_PPDPR": depression_frequencies,
-                    "MH_PPDX": depression_after_birth
+                    "MH_PPDX": depression_after_birth,
+                    "MAT_AGE_PU": maternal_ages
                 })
 
+                # Reorder columns to match the required order
+                batch_data_numeric = batch_data_numeric[required_columns]
+
+                # Predict using ANN
                 predictions = ann_model.predict(batch_data_numeric)
                 batch_data["Prediction"] = [
                     "High Risk of Postpartum Depression" if pred > 0.5 else "Low Risk of Postpartum Depression" 
