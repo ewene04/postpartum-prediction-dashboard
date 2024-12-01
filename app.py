@@ -125,15 +125,17 @@ elif mode == "Batch (ANN)":
                 batch_data_numeric = batch_data_numeric[required_columns]
 
                 # Predict using ANN
-                predictions = ann_model.predict(batch_data_numeric)
+                predictions = ann_model.predict(batch_data_numeric).flatten()  # Flatten the predictions array
                 batch_data["Prediction"] = [
                     "High Risk of Postpartum Depression" if pred > 0.5 else "Low Risk of Postpartum Depression" 
                     for pred in predictions
                 ]
+                
+                # Display results
                 st.write("Prediction Results:")
                 st.dataframe(batch_data)
 
-                # Download the results
+                # Allow download of results
                 st.download_button(
                     label="Download Predictions",
                     data=batch_data.to_csv(index=False),
