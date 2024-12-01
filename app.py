@@ -50,7 +50,7 @@ depression_after_birth = {
 }
 
 maternal_ages = {
-    "Unknown": 0, "17 or younger": 17, "45 or older": 45
+    "18-44": 0, "17 or younger": 17, "45 or older": 45
 }
 
 # Sidebar for mode selection
