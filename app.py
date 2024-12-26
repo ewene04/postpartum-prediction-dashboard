@@ -118,16 +118,16 @@ if mode == "Real-Time (LightGBM)":
     # Input sliders for user data
     depression_frequency = st.selectbox("Since your new baby was born, how often have you felt down, depressed, or hopeless?", list(depression_frequencies.keys()))
     household_income = st.selectbox("During the 12 months before your new baby was born, what was your yearly total household income before taxes?", list(incomes.keys()))
-    maternal_race = st.selectbox("What is the race of the mother?", list(maternal_races.keys()))
+    maternal_race = st.selectbox("What is your race/ethnicity?", list(maternal_races.keys()))
     maternal_age = st.number_input(
-    "What is the age of the mother?",
+    "How old are you?",
     min_value=17,
     max_value=45,
     value=18,  # Default value
     step=1
 )
-    paternal_education = st.selectbox("What is the educational level of the father?", list(educational_levels.keys()))
-    maternal_education = st.selectbox("What is the educational levle of the mother?", list(educational_levels.keys()))
+    paternal_education = st.selectbox("What is the highest level of education completed by your baby's other parent or caregiver?", list(educational_levels.keys()))
+    maternal_education = st.selectbox("What is the highest level of education you have completed?", list(educational_levels.keys()))
     state = st.selectbox("What is the current state you are living in?", list(states.keys()))
     depression_after = st.selectbox("Since your new baby was born, has a doctor, nurse, or other health care worker told you that you had depression?", list(depression_after_birth.keys()))
     
