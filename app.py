@@ -211,44 +211,49 @@ if mode == "Batch (ANN)":
                             for pred in predictions
                         ]
 
-                        # Display results
-                        st.write("Prediction Results:")
-                        st.dataframe(batch_data)
+# Display metrics side by side using Streamlit columns
+col1, col2, col3 = st.columns(3)
 
-                        # Calculate metrics
-                        total_cases = len(batch_data)
-                        high_risk_cases = sum(batch_data["Prediction"] == "High Risk of Postpartum Depression")
-                        low_risk_cases = total_cases - high_risk_cases
+with col1:
+    st.metric("Total Cases", total_cases)
 
-                        # Display metrics
-                        st.metric("Total Cases", total_cases)
-                        st.metric("Low Risk Cases", low_risk_cases)
-                        st.metric("High Risk Cases", high_risk_cases)
+with col2:
+    st.metric("Low Risk Cases", low_risk_cases)
 
-                        # Generate data for the pie chart
-                        chart_data = pd.DataFrame({
-                            "Risk Type": ["Low Risk", "High Risk"],
-                            "Count": [low_risk_cases, high_risk_cases]
-                        })
+with col3:
+    st.metric("High Risk Cases", high_risk_cases)
 
-                        # Create pie chart using Altair
-                        pie_chart = alt.Chart(chart_data).mark_arc().encode(
-                            theta=alt.Theta(field="Count", type="quantitative"),
-                            color=alt.Color(field="Risk Type", type="nominal"),
-                            tooltip=["Risk Type", "Count"]
-                        ).properties(
-                            title="Risk Distribution"
-                        )
+# Generate and display the pie chart after the metrics
+chart_data = pd.DataFrame({
+    "Risk Type": ["Low Risk", "High Risk"],
+    "Count": [low_risk_cases, high_risk_cases]
+})
 
-                        # Display the pie chart
-                        st.altair_chart(pie_chart, use_container_width=True)
+# Define custom colors for the pie chart
+custom_colors = alt.Scale(domain=["Low Risk", "High Risk"], range=["#4CAF50", "#FF5722"])  # Green for Low Risk, Red for High Risk
 
-                        # Allow download of results
-                        st.download_button(
-                            label="Download Predictions",
-                            data=batch_data.to_csv(index=False),
-                            file_name="batch_predictions.csv",
-                            mime="text/csv"
-                        )
+pie_chart = alt.Chart(chart_data).mark_arc().encode(
+    theta=alt.Theta(field="Count", type="quantitative"),
+    color=alt.Color(field="Risk Type", type="nominal", scale=custom_colors),
+    tooltip=["Risk Type", "Count"]
+).properties(
+    title="Risk Distribution"
+)
+
+# Move prediction results to the bottom
+st.altair_chart(pie_chart, use_container_width=True)
+
+# Show prediction results table at the end
+st.write("**Prediction Results**")
+st.dataframe(batch_data)
+
+# Allow download of results
+st.download_button(
+    label="Download Predictions",
+    data=batch_data.to_csv(index=False),
+    file_name="batch_predictions.csv",
+    mime="text/csv"
+)
+
         except Exception as e:
             st.error(f"Error processing uploaded file: {e}")
