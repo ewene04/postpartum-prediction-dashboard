@@ -2,6 +2,7 @@ import streamlit as st
 import lightgbm as lgb
 import tensorflow as tf
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Add Page Configuration and Styling
 st.set_page_config(
@@ -158,8 +159,6 @@ elif mode == "Batch (ANN)":
     st.title("Batch Prediction (ANN)")
     
     uploaded_file = st.file_uploader("Upload a CSV File (8 columns required)", type="csv")
-    
-import matplotlib.pyplot as plt
 
 if uploaded_file:
     try:
