@@ -108,10 +108,6 @@ depression_after_birth = {
     "Not sure": 0, "NO": 1, "YES": 2
 }
 
-maternal_ages = {
-    "18-44": 0, "17 or younger": 17, "45 or older": 45
-}
-
 # Sidebar for mode selection
 mode = st.sidebar.radio("Choose Mode:", ["Real-Time (LightGBM)", "Batch (ANN)"])
 
@@ -123,7 +119,13 @@ if mode == "Real-Time (LightGBM)":
     depression_frequency = st.selectbox("How frequently do you feel depressed since birth?", list(depression_frequencies.keys()))
     household_income = st.selectbox("What is the total income you have in the past 12 months?", list(incomes.keys()))
     maternal_race = st.selectbox("What is the race of the mother?", list(maternal_races.keys()))
-    maternal_age = st.selectbox("What is the age of the mother?", list(maternal_ages.keys()))
+    maternal_age = st.number_input(
+    "What is the age of the mother?",
+    min_value=17,
+    max_value=45,
+    value=18,  # Default value
+    step=1
+)
     paternal_education = st.selectbox("What is the educational level of the father?", list(educational_levels.keys()))
     maternal_education = st.selectbox("What is the educational levle of the mother?", list(educational_levels.keys()))
     state = st.selectbox("What is the current state you are staying in?", list(states.keys()))
@@ -134,7 +136,7 @@ if mode == "Real-Time (LightGBM)":
             "MH_PPDPR": [depression_frequencies[depression_frequency]],
             "INCOME8": [incomes[household_income]],
             "MAT_RACE_PU": [maternal_races[maternal_race]],
-            "MAT_AGE_PU": [maternal_ages[maternal_age]],
+            "MAT_AGE_PU": [maternal_age],
             "PAT_ED": [educational_levels[paternal_education]],
             "MAT_ED": [educational_levels[maternal_education]],
             "STATE": [states[state]],
