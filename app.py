@@ -116,8 +116,8 @@ if mode == "Real-Time (LightGBM)":
     st.title("Real-Time Prediction (LightGBM)")
     
     # Input sliders for user data
-    depression_frequency = st.selectbox("How frequently do you feel depressed since birth?", list(depression_frequencies.keys()))
-    household_income = st.selectbox("What is the total income you have in the past 12 months?", list(incomes.keys()))
+    depression_frequency = st.selectbox("Since your new baby was born, how often have you felt down, depressed, or hopeless?", list(depression_frequencies.keys()))
+    household_income = st.selectbox("During the 12 months before your new baby was born, what was your yearly total household income before taxes?", list(incomes.keys()))
     maternal_race = st.selectbox("What is the race of the mother?", list(maternal_races.keys()))
     maternal_age = st.number_input(
     "What is the age of the mother?",
@@ -128,8 +128,8 @@ if mode == "Real-Time (LightGBM)":
 )
     paternal_education = st.selectbox("What is the educational level of the father?", list(educational_levels.keys()))
     maternal_education = st.selectbox("What is the educational levle of the mother?", list(educational_levels.keys()))
-    state = st.selectbox("What is the current state you are staying in?", list(states.keys()))
-    depression_after = st.selectbox("Do you feel depressed after giving birth?", list(depression_after_birth.keys()))
+    state = st.selectbox("What is the current state you are living in?", list(states.keys()))
+    depression_after = st.selectbox("Since your new baby was born, has a doctor, nurse, or other health care worker told you that you had depression?", list(depression_after_birth.keys()))
     
     if st.button("Predict"):
         input_data = pd.DataFrame({
