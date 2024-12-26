@@ -2,6 +2,7 @@ import streamlit as st
 import lightgbm as lgb
 import tensorflow as tf
 import pandas as pd
+import json
 
 # Add Page Configuration and Styling
 st.set_page_config(
@@ -59,54 +60,17 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Dashboard Title
-st.markdown("<div class='main-title'>Postpartum Depression Prediction</div>", unsafe_allow_html=True)
+# Load dropdown options from JSON file
+with open("dropdown_options.json", "r") as file:
+    dropdown_options = json.load(file)
 
-@st.cache_resource
-def load_models():
-    # Load LightGBM model
-    lgb_model = lgb.Booster(model_file="lightgbm_model.txt")
-    # Load ANN model
-    ann_model = tf.keras.models.load_model("ann_model.h5")
-    return lgb_model, ann_model
-
-# Load the models
-lgb_model, ann_model = load_models()
-
-# Dropdown options and mappings
-states = {
-    "Not sure": 0, "Utah": 1, "New York City": 2, "Illinois": 3, "Colorado": 4, 
-    "Nebraska": 5, "New Jersey": 6, "Missouri": 7, "Pennsylvania": 8, 
-    "Maryland": 9, "Puerto Rico": 10, "New York (State)": 11, "Alabama": 12, 
-    "New Hampshire": 13, "Washington, D.C.": 14, "Arizona": 15
-}
-
-maternal_races = {
-    "Not sure": 0, "WHITE": 2, "BLACK": 3, "AM INDIAN": 4, "AK NATIVE": 10, 
-    "ASIAN": 21, "HAWAIIAN/OTH PAC ISLANDER": 22, "OTHER/MULTIPLE RACE": 23
-}
-
-educational_levels = {
-    "Not sure": 0, "<= 8TH GRADE": 1, "9-12 GRADE, NO DIPLOMA": 2, 
-    "HIGH SCHOOL GRAD/GED": 3, "SOME COLLEGE, NO DEG/ASSOCIATE DEG": 4, 
-    "BACHELORS/MASTERS/DOCTORATE/PROF": 5
-}
-
-incomes = {
-    "Not sure": 0, "$0 TO $16,000": 1, "$16,001 TO $20,000": 2, "$20,001 TO $24,000": 3, 
-    "$24,001 TO $28,000": 4, "$28,001 TO $32,000": 5, "$32,001 TO $40,000": 6, 
-    "$40,001 TO $48,000": 7, "$48,001 TO $57,000": 8, "$57,001 TO $60,000": 9, 
-    "$60,001 TO $73,000": 10, "$73,001 TO $85,000": 11, "$85,001 TO $99,999": 12, 
-    "$100,001 OR MORE": 13
-}
-
-depression_frequencies = {
-    "Not sure": 0, "ALWAYS": 1, "OFTEN": 2, "SOMETIMES": 3, "RARELY": 4, "NEVER": 5
-}
-
-depression_after_birth = {
-    "Not sure": 0, "NO": 1, "YES": 2
-}
+# Assign to variables for usage in the app
+states = dropdown_options["states"]
+maternal_races = dropdown_options["maternal_races"]
+educational_levels = dropdown_options["educational_levels"]
+incomes = dropdown_options["incomes"]
+depression_frequencies = dropdown_options["depression_frequencies"]
+depression_after_birth = dropdown_options["depression_after_birth"]
 
 # Sidebar for mode selection
 mode = st.sidebar.radio("Choose Mode:", ["Real-Time (LightGBM)", "Batch (ANN)"])
