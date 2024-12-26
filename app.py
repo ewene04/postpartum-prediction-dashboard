@@ -247,7 +247,8 @@ if mode == "Batch (ANN)":
                         # Calculate percentages
                         chart_data["Percentage"] = (chart_data["Count"] / chart_data["Count"].sum() * 100).round(1)
 
-                        pie_chart = alt.Chart(chart_data).mark_arc().encode(
+                        # Base pie chart
+                        pie_chart = alt.Chart(chart_data).mark_arc(innerRadius=50).encode(
                             theta=alt.Theta(field="Count", type="quantitative"),
                             color=alt.Color(field="Risk Type", type="nominal", scale=custom_colors),
                             tooltip=[
@@ -258,23 +259,24 @@ if mode == "Batch (ANN)":
                         )
 
                         # Add percentage labels
-                        text_labels = pie_chart.mark_text(
-                            radiusOffset=20,  # Position labels slightly outside the pie slices
-                            fontSize=12,  # Adjust font size for better readability
-                            color="black"
+                        text_labels = alt.Chart(chart_data).mark_text(
+                            fontSize=14,
+                            fontWeight="bold",
+                            color="white"
                         ).encode(
-                            text=alt.Text("Percentage:Q", format=".1f"),  # Format percentage with one decimal place
+                            theta=alt.Theta(field="Count", type="quantitative"),
+                            text=alt.Text("Percentage:Q", format=".1f")
                         )
 
                         # Combine pie chart and labels
-                        pie_chart = pie_chart + text_labels
+                        pie_chart_with_labels = pie_chart + text_labels
 
-                        pie_chart = pie_chart.properties(
+                        pie_chart_with_labels = pie_chart_with_labels.properties(
                             title="Risk Distribution"
                         )
 
                         # Display the pie chart
-                        st.altair_chart(pie_chart, use_container_width=True)
+                        st.altair_chart(pie_chart_with_labels, use_container_width=True)
                         
                         # Show prediction results at the end
                         st.write("**Prediction Results**")
