@@ -244,17 +244,24 @@ if mode == "Batch (ANN)":
                             range=["#41B7C4", "#F0007B"]  # Blue for Low Risk, Pink for High Risk
                         )
 
+                        # Calculate percentages
+                        chart_data["Percentage"] = (chart_data["Count"] / chart_data["Count"].sum() * 100).round(1)
+
                         pie_chart = alt.Chart(chart_data).mark_arc().encode(
                             theta=alt.Theta(field="Count", type="quantitative"),
                             color=alt.Color(field="Risk Type", type="nominal", scale=custom_colors),
-                            tooltip=["Risk Type", "Count"]
+                            tooltip=[
+                                alt.Tooltip("Risk Type", title="Risk Type"),
+                                alt.Tooltip("Count", title="Count"),
+                                alt.Tooltip("Percentage", title="Percentage (%)")
+                            ]
                         ).properties(
                             title="Risk Distribution"
                         )
 
                         # Display the pie chart
                         st.altair_chart(pie_chart, use_container_width=True)
-
+                        
                         # Show prediction results at the end
                         st.write("**Prediction Results**")
                         st.dataframe(batch_data)
