@@ -153,72 +153,102 @@ if mode == "Real-Time (LightGBM)":
         except Exception as e:
             st.error(f"Error during prediction: {e}")
 
+import altair as alt
+
 # Batch Prediction using ANN
-elif mode == "Batch (ANN)":
+if mode == "Batch (ANN)":
     st.title("Batch Prediction (ANN)")
-    
+
     uploaded_file = st.file_uploader("Upload a CSV File (8 columns required)", type="csv")
-    
-if uploaded_file:
-    try:
-        # Load uploaded data
-        batch_data = pd.read_csv(uploaded_file)
 
-        # Validate column structure
-        required_columns = ["MH_PPDPR", "INCOME8", "MAT_RACE_PU", "MAT_AGE_PU", "PAT_ED", "MAT_ED", "STATE", "MH_PPDX"]
-        missing_columns = [col for col in required_columns if col not in batch_data.columns]
-        if missing_columns:
-            st.error(f"Missing required columns: {', '.join(missing_columns)}")
-        else:
-            # Map input data to numerical values
-            batch_data_numeric = batch_data.replace({
-                "STATE": states, 
-                "MAT_RACE_PU": maternal_races,
-                "MAT_ED": educational_levels,
-                "PAT_ED": educational_levels,
-                "INCOME8": incomes,
-                "MH_PPDPR": depression_frequencies,
-                "MH_PPDX": depression_after_birth
-            })
+    if uploaded_file:
+        try:
+            # Load uploaded data
+            batch_data = pd.read_csv(uploaded_file)
 
-            # Validate maternal age column
-            if not pd.api.types.is_numeric_dtype(batch_data["MAT_AGE_PU"]):
-                st.error("Error: MAT_AGE_PU column must contain numeric values representing maternal age.")
-            elif (batch_data["MAT_AGE_PU"] < 17).any() or (batch_data["MAT_AGE_PU"] > 45).any():
-                st.error("Error: MAT_AGE_PU values must be between 17 and 45.")
+            # Validate column structure
+            required_columns = ["MH_PPDPR", "INCOME8", "MAT_RACE_PU", "MAT_AGE_PU", "PAT_ED", "MAT_ED", "STATE", "MH_PPDX"]
+            missing_columns = [col for col in required_columns if col not in batch_data.columns]
+            if missing_columns:
+                st.error(f"Missing required columns: {', '.join(missing_columns)}")
             else:
-                batch_data_numeric["MAT_AGE_PU"] = batch_data["MAT_AGE_PU"]
+                # Map input data to numerical values
+                batch_data_numeric = batch_data.replace({
+                    "STATE": states,
+                    "MAT_RACE_PU": maternal_races,
+                    "MAT_ED": educational_levels,
+                    "PAT_ED": educational_levels,
+                    "INCOME8": incomes,
+                    "MH_PPDPR": depression_frequencies,
+                    "MH_PPDX": depression_after_birth
+                })
 
-                # Reorder columns to match the required order
-                batch_data_numeric = batch_data_numeric[required_columns]
-
-                # Predict using ANN and extract probability for the positive class
-                raw_predictions = ann_model.predict(batch_data_numeric)
-                if len(raw_predictions.shape) > 1 and raw_predictions.shape[1] > 1:
-                    predictions = raw_predictions[:, 1]
+                # Validate maternal age column
+                if not pd.api.types.is_numeric_dtype(batch_data["MAT_AGE_PU"]):
+                    st.error("Error: MAT_AGE_PU column must contain numeric values representing maternal age.")
+                elif (batch_data["MAT_AGE_PU"] < 17).any() or (batch_data["MAT_AGE_PU"] > 45).any():
+                    st.error("Error: MAT_AGE_PU values must be between 17 and 45.")
                 else:
-                    predictions = raw_predictions.flatten()
+                    batch_data_numeric["MAT_AGE_PU"] = batch_data["MAT_AGE_PU"]
 
-                # Ensure predictions length matches the input
-                if len(predictions) != len(batch_data_numeric):
-                    st.error("Error: The number of predictions does not match the input data. Please verify your model.")
-                else:
-                    # Add predictions to the original dataframe
-                    batch_data["Prediction"] = [
-                        "High Risk of Postpartum Depression" if pred > 0.5 else "Low Risk of Postpartum Depression" 
-                        for pred in predictions
-                    ]
-                    
-                    # Display results
-                    st.write("Prediction Results:")
-                    st.dataframe(batch_data)
+                    # Reorder columns to match the required order
+                    batch_data_numeric = batch_data_numeric[required_columns]
 
-                    # Allow download of results
-                    st.download_button(
-                        label="Download Predictions",
-                        data=batch_data.to_csv(index=False),
-                        file_name="batch_predictions.csv",
-                        mime="text/csv"
-                    )
-    except Exception as e:
-        st.error(f"Error processing uploaded file: {e}")
+                    # Predict using ANN and extract probability for the positive class
+                    raw_predictions = ann_model.predict(batch_data_numeric)
+                    if len(raw_predictions.shape) > 1 and raw_predictions.shape[1] > 1:
+                        predictions = raw_predictions[:, 1]
+                    else:
+                        predictions = raw_predictions.flatten()
+
+                    # Ensure predictions length matches the input
+                    if len(predictions) != len(batch_data_numeric):
+                        st.error("Error: The number of predictions does not match the input data. Please verify your model.")
+                    else:
+                        # Add predictions to the original dataframe
+                        batch_data["Prediction"] = [
+                            "High Risk of Postpartum Depression" if pred > 0.5 else "Low Risk of Postpartum Depression"
+                            for pred in predictions
+                        ]
+
+                        # Display results
+                        st.write("Prediction Results:")
+                        st.dataframe(batch_data)
+
+                        # Calculate metrics
+                        total_cases = len(batch_data)
+                        high_risk_cases = sum(batch_data["Prediction"] == "High Risk of Postpartum Depression")
+                        low_risk_cases = total_cases - high_risk_cases
+
+                        # Display metrics
+                        st.metric("Total Cases", total_cases)
+                        st.metric("Low Risk Cases", low_risk_cases)
+                        st.metric("High Risk Cases", high_risk_cases)
+
+                        # Generate data for the pie chart
+                        chart_data = pd.DataFrame({
+                            "Risk Type": ["Low Risk", "High Risk"],
+                            "Count": [low_risk_cases, high_risk_cases]
+                        })
+
+                        # Create pie chart using Altair
+                        pie_chart = alt.Chart(chart_data).mark_arc().encode(
+                            theta=alt.Theta(field="Count", type="quantitative"),
+                            color=alt.Color(field="Risk Type", type="nominal"),
+                            tooltip=["Risk Type", "Count"]
+                        ).properties(
+                            title="Risk Distribution"
+                        )
+
+                        # Display the pie chart
+                        st.altair_chart(pie_chart, use_container_width=True)
+
+                        # Allow download of results
+                        st.download_button(
+                            label="Download Predictions",
+                            data=batch_data.to_csv(index=False),
+                            file_name="batch_predictions.csv",
+                            mime="text/csv"
+                        )
+        except Exception as e:
+            st.error(f"Error processing uploaded file: {e}")
