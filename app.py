@@ -2,7 +2,6 @@ import streamlit as st
 import lightgbm as lgb
 import tensorflow as tf
 import pandas as pd
-import matplotlib.pyplot as plt
 
 # Add Page Configuration and Styling
 st.set_page_config(
@@ -224,16 +223,19 @@ if uploaded_file:
                     st.metric("Low Risk Cases", low_risk_cases)
                     st.metric("High Risk Cases", high_risk_cases)
 
-                    # Generate pie chart
-                    fig, ax = plt.subplots()
-                    labels = ["Low Risk", "High Risk"]
-                    sizes = [low_risk_cases, high_risk_cases]
-                    colors = ['#98FB98', '#FF6347']  # Green for Low Risk, Red for High Risk
-                    ax.pie(
-                        sizes, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors
-                    )
-                    ax.axis('equal')  # Equal aspect ratio to ensure the pie is drawn as a circle
-                    st.pyplot(fig)
+import plotly.graph_objects as go
+
+# Generate pie chart using Plotly
+labels = ["Low Risk", "High Risk"]
+sizes = [low_risk_cases, high_risk_cases]
+colors = ['#98FB98', '#FF6347']  # Green for Low Risk, Red for High Risk
+
+fig = go.Figure(
+    data=[go.Pie(labels=labels, values=sizes, marker=dict(colors=colors), hole=0.4)]
+)
+fig.update_traces(hoverinfo='label+percent', textinfo='value+percent')
+
+st.plotly_chart(fig)
 
                     # Allow download of results
                     st.download_button(
