@@ -218,14 +218,20 @@ if mode == "Batch (ANN)":
                         high_risk_cases = sum(batch_data["Prediction"] == "High Risk of Postpartum Depression")
                         low_risk_cases = total_cases - high_risk_cases
 
-                        # Display metrics side by side
+                        # Display metrics side by side with bold styling
                         col1, col2, col3 = st.columns(3)
+
                         with col1:
-                            st.metric("Total Cases", total_cases)
+                            st.markdown(f"<h4 style='text-align: center; font-weight: bold;'>Total Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h2 style='text-align: center; margin-top: -10px;'>{total_cases}</h2>", unsafe_allow_html=True)
+
                         with col2:
-                            st.metric("Low Risk Cases", low_risk_cases)
+                            st.markdown(f"<h4 style='text-align: center; font-weight: bold;'>Low Risk Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h2 style='text-align: center; margin-top: -10px;'>{low_risk_cases}</h2>", unsafe_allow_html=True)
+
                         with col3:
-                            st.metric("High Risk Cases", high_risk_cases)
+                            st.markdown(f"<h4 style='text-align: center; font-weight: bold;'>High Risk Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h2 style='text-align: center; margin-top: -10px;'>{high_risk_cases}</h2>", unsafe_allow_html=True)
 
                         # Generate and display the pie chart with custom colors
                         chart_data = pd.DataFrame({
