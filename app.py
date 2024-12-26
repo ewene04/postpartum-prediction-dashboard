@@ -247,8 +247,7 @@ if mode == "Batch (ANN)":
                         # Calculate percentages
                         chart_data["Percentage"] = (chart_data["Count"] / chart_data["Count"].sum() * 100).round(1)
 
-                        # Base pie chart
-                        pie_chart = alt.Chart(chart_data).mark_arc(innerRadius=50).encode(
+                        pie_chart = alt.Chart(chart_data).mark_arc().encode(
                             theta=alt.Theta(field="Count", type="quantitative"),
                             color=alt.Color(field="Risk Type", type="nominal", scale=custom_colors),
                             tooltip=[
@@ -256,27 +255,12 @@ if mode == "Batch (ANN)":
                                 alt.Tooltip("Count", title="Count"),
                                 alt.Tooltip("Percentage", title="Percentage (%)")
                             ]
-                        )
-
-                        # Add percentage labels
-                        text_labels = alt.Chart(chart_data).mark_text(
-                            fontSize=14,
-                            fontWeight="bold",
-                            color="white"
-                        ).encode(
-                            theta=alt.Theta(field="Count", type="quantitative"),
-                            text=alt.Text("Percentage:Q", format=".1f")
-                        )
-
-                        # Combine pie chart and labels
-                        pie_chart_with_labels = pie_chart + text_labels
-
-                        pie_chart_with_labels = pie_chart_with_labels.properties(
+                        ).properties(
                             title="Risk Distribution"
                         )
 
                         # Display the pie chart
-                        st.altair_chart(pie_chart_with_labels, use_container_width=True)
+                        st.altair_chart(pie_chart, use_container_width=True)
                         
                         # Show prediction results at the end
                         st.write("**Prediction Results**")
