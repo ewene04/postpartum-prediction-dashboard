@@ -222,16 +222,16 @@ if mode == "Batch (ANN)":
                         col1, col2, col3 = st.columns(3)
 
                         with col1:
-                            st.markdown(f"<h4 style='text-align: center; font-weight: bold;'>Total Cases</h4>", unsafe_allow_html=True)
-                            st.markdown(f"<h2 style='text-align: center; margin-top: -10px;'>{total_cases}</h2>", unsafe_allow_html=True)
+                            st.markdown(f"<h3 style='text-align: center; font-weight: bold;'>Total Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h1 style='text-align: center; margin-top: -10px;'>{total_cases}</h2>", unsafe_allow_html=True)
 
                         with col2:
-                            st.markdown(f"<h4 style='text-align: center; font-weight: bold;'>Low Risk Cases</h4>", unsafe_allow_html=True)
-                            st.markdown(f"<h2 style='text-align: center; margin-top: -10px;'>{low_risk_cases}</h2>", unsafe_allow_html=True)
+                            st.markdown(f"<h3 style='text-align: center; font-weight: bold;'>Low Risk Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h1 style='text-align: center; margin-top: -10px;'>{low_risk_cases}</h2>", unsafe_allow_html=True)
 
                         with col3:
-                            st.markdown(f"<h4 style='text-align: center; font-weight: bold;'>High Risk Cases</h4>", unsafe_allow_html=True)
-                            st.markdown(f"<h2 style='text-align: center; margin-top: -10px;'>{high_risk_cases}</h2>", unsafe_allow_html=True)
+                            st.markdown(f"<h3 style='text-align: center; font-weight: bold;'>High Risk Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h1 style='text-align: center; margin-top: -10px;'>{high_risk_cases}</h2>", unsafe_allow_html=True)
 
                         # Generate and display the pie chart with custom colors
                         chart_data = pd.DataFrame({
