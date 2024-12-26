@@ -255,7 +255,21 @@ if mode == "Batch (ANN)":
                                 alt.Tooltip("Count", title="Count"),
                                 alt.Tooltip("Percentage", title="Percentage (%)")
                             ]
-                        ).properties(
+                        )
+
+                        # Add percentage labels
+                        text_labels = pie_chart.mark_text(
+                            radiusOffset=20,  # Position labels slightly outside the pie slices
+                            fontSize=12,  # Adjust font size for better readability
+                            color="black"
+                        ).encode(
+                            text=alt.Text("Percentage:Q", format=".1f"),  # Format percentage with one decimal place
+                        )
+
+                        # Combine pie chart and labels
+                        pie_chart = pie_chart + text_labels
+
+                        pie_chart = pie_chart.properties(
                             title="Risk Distribution"
                         )
 
