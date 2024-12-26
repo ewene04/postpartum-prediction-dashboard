@@ -179,7 +179,7 @@ elif mode == "Batch (ANN)":
                     "INCOME8": incomes,
                     "MH_PPDPR": depression_frequencies,
                     "MH_PPDX": depression_after_birth,
-                    "MAT_AGE_PU": maternal_ages
+                    "MAT_AGE_PU": maternal_age
                 })
 
                 # Reorder columns to match the required order
