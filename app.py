@@ -96,26 +96,30 @@ if mode == "Real-Time (LightGBM)":
     depression_after = st.selectbox("Since your new baby was born, has a doctor, nurse, or other health care worker told you that you had depression?", list(depression_after_birth.keys()))
     
     if st.button("Predict"):
-        input_data = pd.DataFrame({
-            "MH_PPDPR": [depression_frequencies[depression_frequency]],
-            "INCOME8": [incomes[household_income]],
-            "MAT_RACE_PU": [maternal_races[maternal_race]],
-            "MAT_AGE_PU": [maternal_age],
-            "PAT_ED": [educational_levels[paternal_education]],
-            "MAT_ED": [educational_levels[maternal_education]],
-            "STATE": [states[state]],
-            "MH_PPDX": [depression_after_birth[depression_after]]
-        })
+        # Check if the model is loaded
+        if lgb_model is None:
+            st.error("LightGBM model is not loaded. Please check the model file.")
+        else:
+            input_data = pd.DataFrame({
+                "MH_PPDPR": [depression_frequencies[depression_frequency]],
+                "INCOME8": [incomes[household_income]],
+                "MAT_RACE_PU": [maternal_races[maternal_race]],
+                "MAT_AGE_PU": [maternal_age],
+                "PAT_ED": [educational_levels[paternal_education]],
+                "MAT_ED": [educational_levels[maternal_education]],
+                "STATE": [states[state]],
+                "MH_PPDX": [depression_after_birth[depression_after]]
+            })
 
-        try:
-            # Predict using LightGBM
-            prediction = lgb_model.predict(input_data)[0]
-            if prediction > 0.5:
-                st.error("High Risk of Postpartum Depression")
-            else:
-                st.success("Low Risk of Postpartum Depression")
-        except Exception as e:
-            st.error(f"Error during prediction: {e}")
+            try:
+                # Predict using LightGBM
+                prediction = lgb_model.predict(input_data)[0]
+                if prediction > 0.5:
+                    st.error("High Risk of Postpartum Depression")
+                else:
+                    st.success("Low Risk of Postpartum Depression")
+            except Exception as e:
+                st.error(f"Error during prediction: {e}")
 
 import altair as alt
 
