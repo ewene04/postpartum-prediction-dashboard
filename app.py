@@ -234,7 +234,7 @@ if uploaded_file:
 
                     custom_colors = alt.Scale(
                         domain=["Low Risk", "High Risk"],
-                        range=["#4CAF50", "#FF5722"]  # Green for Low Risk, Red for High Risk
+                        range=["#41B7C4", "#F0007B"]  # Green for Low Risk, Red for High Risk
                     )
 
                     pie_chart = alt.Chart(chart_data).mark_arc().encode(
