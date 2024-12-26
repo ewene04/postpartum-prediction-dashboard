@@ -212,9 +212,6 @@ if uploaded_file:
                     ]
 
                     # Display results
-                    st.write("Prediction Results:")
-                    st.dataframe(batch_data)
-
                     # Calculate metrics
                     total_cases = len(batch_data)
                     high_risk_cases = sum(batch_data["Prediction"] == "High Risk of Postpartum Depression")
