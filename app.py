@@ -159,28 +159,35 @@ elif mode == "Batch (ANN)":
     
     uploaded_file = st.file_uploader("Upload a CSV File (8 columns required)", type="csv")
     
-    if uploaded_file:
-        try:
-            # Load uploaded data
-            batch_data = pd.read_csv(uploaded_file)
+if uploaded_file:
+    try:
+        # Load uploaded data
+        batch_data = pd.read_csv(uploaded_file)
 
-            # Validate column structure
-            required_columns = ["MH_PPDPR", "INCOME8", "MAT_RACE_PU", "MAT_AGE_PU", "PAT_ED", "MAT_ED", "STATE", "MH_PPDX"]
-            missing_columns = [col for col in required_columns if col not in batch_data.columns]
-            if missing_columns:
-                st.error(f"Missing required columns: {', '.join(missing_columns)}")
+        # Validate column structure
+        required_columns = ["MH_PPDPR", "INCOME8", "MAT_RACE_PU", "MAT_AGE_PU", "PAT_ED", "MAT_ED", "STATE", "MH_PPDX"]
+        missing_columns = [col for col in required_columns if col not in batch_data.columns]
+        if missing_columns:
+            st.error(f"Missing required columns: {', '.join(missing_columns)}")
+        else:
+            # Map input data to numerical values
+            batch_data_numeric = batch_data.replace({
+                "STATE": states, 
+                "MAT_RACE_PU": maternal_races,
+                "MAT_ED": educational_levels,
+                "PAT_ED": educational_levels,
+                "INCOME8": incomes,
+                "MH_PPDPR": depression_frequencies,
+                "MH_PPDX": depression_after_birth
+            })
+
+            # Validate maternal age column
+            if not pd.api.types.is_numeric_dtype(batch_data["MAT_AGE_PU"]):
+                st.error("Error: MAT_AGE_PU column must contain numeric values representing maternal age.")
+            elif (batch_data["MAT_AGE_PU"] < 17).any() or (batch_data["MAT_AGE_PU"] > 45).any():
+                st.error("Error: MAT_AGE_PU values must be between 17 and 45.")
             else:
-                # Map input data to numerical values
-                batch_data_numeric = batch_data.replace({
-                    "STATE": states, 
-                    "MAT_RACE_PU": maternal_races,
-                    "MAT_ED": educational_levels,
-                    "PAT_ED": educational_levels,
-                    "INCOME8": incomes,
-                    "MH_PPDPR": depression_frequencies,
-                    "MH_PPDX": depression_after_birth,
-                    "MAT_AGE_PU": maternal_age
-                })
+                batch_data_numeric["MAT_AGE_PU"] = batch_data["MAT_AGE_PU"]
 
                 # Reorder columns to match the required order
                 batch_data_numeric = batch_data_numeric[required_columns]
@@ -213,5 +220,5 @@ elif mode == "Batch (ANN)":
                         file_name="batch_predictions.csv",
                         mime="text/csv"
                     )
-        except Exception as e:
-            st.error(f"Error processing uploaded file: {e}")
+    except Exception as e:
+        st.error(f"Error processing uploaded file: {e}")
