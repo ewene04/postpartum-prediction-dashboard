@@ -137,6 +137,8 @@ if mode == "Real-Time (LightGBM)":
             except Exception as e:
                 st.error(f"Error during prediction: {e}")
 
+import altair as alt
+
 # Batch Prediction using ANN
 if mode == "Batch (ANN)":
     st.title("Batch Prediction (ANN)")
@@ -177,16 +179,83 @@ if mode == "Batch (ANN)":
                     # Reorder columns to match the required order
                     batch_data_numeric = batch_data_numeric[required_columns]
 
-                    # Predict using ANN
+                    # Predict using ANN and extract probability for the positive class
                     raw_predictions = ann_model.predict(batch_data_numeric)
-                    predictions = (raw_predictions.flatten() > 0.5).astype(int)
+                    if len(raw_predictions.shape) > 1 and raw_predictions.shape[1] > 1:
+                        predictions = raw_predictions[:, 1]
+                    else:
+                        predictions = raw_predictions.flatten()
 
-                    # Add predictions to the original dataframe
-                    batch_data["Prediction"] = ["High Risk of Postpartum Depression" if pred else "Low Risk of Postpartum Depression" for pred in predictions]
+                    # Ensure predictions length matches the input
+                    if len(predictions) != len(batch_data_numeric):
+                        st.error("Error: The number of predictions does not match the input data. Please verify your model.")
+                    else:
+                        # Add predictions to the original dataframe
+                        batch_data["Prediction"] = [
+                            "High Risk of Postpartum Depression" if pred > 0.5 else "Low Risk of Postpartum Depression"
+                            for pred in predictions
+                        ]
 
-                    # Display results
-                    st.write("Prediction Results")
-                    st.dataframe(batch_data)
+                        # Display results
+                        # Calculate metrics
+                        total_cases = len(batch_data)
+                        high_risk_cases = sum(batch_data["Prediction"] == "High Risk of Postpartum Depression")
+                        low_risk_cases = total_cases - high_risk_cases
 
+                        # Display metrics side by side with bold styling
+                        col1, col2, col3 = st.columns(3)
+
+                        with col1:
+                            st.markdown(f"<h5 style='text-align: center; font-weight: bold;'>Total Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h1 style='text-align: center; margin-top: -10px;'>{total_cases}</h2>", unsafe_allow_html=True)
+
+                        with col2:
+                            st.markdown(f"<h5 style='text-align: center; font-weight: bold;'>Low Risk Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h1 style='text-align: center; margin-top: -10px;'>{low_risk_cases}</h2>", unsafe_allow_html=True)
+
+                        with col3:
+                            st.markdown(f"<h5 style='text-align: center; font-weight: bold;'>High Risk Cases</h4>", unsafe_allow_html=True)
+                            st.markdown(f"<h1 style='text-align: center; margin-top: -10px;'>{high_risk_cases}</h2>", unsafe_allow_html=True)
+
+                        # Generate and display the pie chart with custom colors
+                        chart_data = pd.DataFrame({
+                            "Risk Type": ["Low Risk", "High Risk"],
+                            "Count": [low_risk_cases, high_risk_cases]
+                        })
+
+                        custom_colors = alt.Scale(
+                            domain=["Low Risk", "High Risk"],
+                            range=["#41B7C4", "#F0007B"]  # Blue for Low Risk, Pink for High Risk
+                        )
+
+                        # Calculate percentages
+                        chart_data["Percentage"] = (chart_data["Count"] / chart_data["Count"].sum() * 100).round(1)
+
+                        pie_chart = alt.Chart(chart_data).mark_arc().encode(
+                            theta=alt.Theta(field="Count", type="quantitative"),
+                            color=alt.Color(field="Risk Type", type="nominal", scale=custom_colors),
+                            tooltip=[
+                                alt.Tooltip("Risk Type", title="Risk Type"),
+                                alt.Tooltip("Count", title="Count"),
+                                alt.Tooltip("Percentage", title="Percentage (%)")
+                            ]
+                        ).properties(
+                            title="Risk Distribution"
+                        )
+
+                        # Display the pie chart
+                        st.altair_chart(pie_chart, use_container_width=True)
+                        
+                        # Show prediction results at the end
+                        st.write("**Prediction Results**")
+                        st.dataframe(batch_data)
+
+                        # Allow download of results
+                        st.download_button(
+                            label="Download Predictions",
+                            data=batch_data.to_csv(index=False),
+                            file_name="batch_predictions.csv",
+                            mime="text/csv"
+                        )
         except Exception as e:
             st.error(f"Error processing uploaded file: {e}")
